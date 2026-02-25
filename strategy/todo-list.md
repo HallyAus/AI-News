@@ -5,14 +5,11 @@
 
 ## In Progress
 
-- [ ] Finalise project infrastructure and create Beads issues for Week 1
+_None currently._
 
 ## Up Next
 
-### Week 1 — Foundation
-- [ ] Scaffold Next.js 15 project (TypeScript, App Router, pnpm, Docker Compose)
-- [ ] Design and migrate DB schema (sources, raw_articles, articles, tickers, categories)
-- [ ] Build LLM provider abstraction layer (interface + Claude implementation)
+### Week 1 — Foundation (remaining)
 - [ ] Research and select 3–5 news sources (RSS feeds, news APIs)
 - [ ] Build ingestion service (fetch → deduplicate → store)
 - [ ] Set up background job scheduler (Inngest or BullMQ)
@@ -49,3 +46,9 @@ _None currently._
 - [x] Populate CLAUDE.md with project details — 2026-02-25
 - [x] Log initial architecture decisions (ADR-001 to ADR-006) — 2026-02-25
 - [x] Create 30-day plan aligned with project workflow — 2026-02-25
+- [x] Scaffold Next.js 16 project (TypeScript, App Router, pnpm, Tailwind) — 2026-02-25
+- [x] Design DB schema (sources, raw_articles, articles, tickers, categories) — 2026-02-25
+- [x] Build LLM provider abstraction layer (interface + Claude implementation) — 2026-02-25
+- [x] Docker Compose for local Postgres — 2026-02-25
+- [x] Environment config with zod validation — 2026-02-25
+- [x] Initial commit and push to GitHub — 2026-02-25

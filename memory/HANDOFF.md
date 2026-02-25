@@ -7,20 +7,23 @@
 
 - **Date:** 2026-02-25
 - **Branch:** main
-- **Focus:** Project planning and infrastructure setup
+- **Focus:** Phase 1A scaffold complete, ready for Phase 1B (ingestion pipeline)
 
 ## Accomplished
 
-- Populated CLAUDE.md with AIMarketWire project details (stack, commands, warnings)
-- Created 30-day plan aligned with project workflow (Beads, ADRs, skills, session management)
-- Logged 6 initial architecture decisions (ADR-001 to ADR-006) in specs/decisions.md
-- Populated todo-list.md with Week 1–4 task breakdown
-- Created architecture overview with system diagram in docs/architecture/overview.md
+- Installed Node.js 24 LTS + pnpm 10.30 on Windows
+- Scaffolded Next.js 16 project with TypeScript, App Router, Tailwind CSS
+- Created Drizzle ORM schema: sources, raw_articles, articles, tickers, categories, article_tickers, article_categories
+- Built LLM abstraction layer with Claude provider (scoring + summarisation)
+- Docker Compose with Postgres 16 for local dev
+- Environment validation with zod
+- Vitest, Prettier, ESLint configured
+- Homepage with AIMarketWire branding and placeholder feed
+- Pushed initial commit to https://github.com/HallyAus/AI-News
 
 ## In Progress
 
-- Need to run `setup.sh` to initialise git and Beads
-- Need to create Beads issues for Week 1 tasks
+_None._
 
 ## Blocked
 
@@ -28,20 +31,30 @@ _None._
 
 ## Next Steps
 
-1. Run `setup.sh` to initialise git repo and Beads
-2. Create Beads issues for all Week 1 tasks
-3. Begin Phase 1A: scaffold Next.js project, Docker Compose, DB schema
-4. Research and select news sources (Phase 1B prep)
+1. Research and select 3–5 news sources (RSS feeds, news APIs) for AI market news
+2. Build ingestion service (fetch → deduplicate → store raw articles)
+3. Set up background job scheduler (Inngest or BullMQ)
+4. Build AI relevance scoring pipeline (0–100 with structured output)
+5. Write tests for scoring service
+6. Generate first Drizzle migration and test against local Postgres
 
 ## Active Beads Issues
 
-_Beads not yet initialised. Run `setup.sh` first._
+_Beads not yet initialised._
 
 ## Context
 
 > Decisions, gotchas, or context that would take time to re-derive.
 
-- 6 ADRs logged: Next.js 15 + Vercel, Neon Postgres, Drizzle ORM, Inngest/BullMQ, category taxonomy, relevance threshold at 40
+- Next.js 16 (not 15) — was latest stable at scaffold time, same App Router architecture
+- Node 24 LTS installed (not 20) — winget pulled latest LTS
+- pnpm global bin is at `/c/Users/User/AppData/Roaming/npm` — needs to be on PATH in shell
+- Node.js installed at `/c/Program Files/nodejs` — also needs PATH
+- `.env.example` couldn't be created due to permission rules — used `env.example` instead
+- esbuild build scripts were skipped during install — works fine without them
+- Drizzle schema uses UUIDs as primary keys, all timestamps with timezone
+- LLM provider abstraction in `src/lib/llm/` — factory pattern, call `createLLMProvider()`
+- Claude provider uses `claude-sonnet-4-20250514` model for scoring and summarisation
 - LLM provider must stay behind abstraction layer — PRD requires model switching without refactor
 - No trading advice in generated content — compliance is a hard requirement
 - Publisher attribution is non-negotiable — always link original source
@@ -49,12 +62,25 @@ _Beads not yet initialised. Run `setup.sh` first._
 ## Files Modified
 
 ```
-CLAUDE.md
-strategy/30-day-plan.md
+package.json
+pnpm-lock.yaml
+docker-compose.yml
+drizzle.config.ts
+env.example
+prettier.config.mjs
+vitest.config.ts
+src/app/layout.tsx
+src/app/page.tsx
+src/db/schema.ts
+src/db/index.ts
+src/db/seed.ts
+src/lib/env.ts
+src/lib/llm/index.ts
+src/lib/llm/claude.ts
+src/types/llm.ts
+.gitignore
 strategy/todo-list.md
-specs/decisions.md
-docs/architecture/overview.md
-memory/HANDOFF.md
 .claude/rules/memory-decisions.md
 .claude/rules/memory-sessions.md
+memory/HANDOFF.md
 ```
