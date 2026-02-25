@@ -8,5 +8,6 @@
 
 <!-- Claude: add new entries at the top. Remove oldest when >20 entries. -->
 
+- [2026-02-25] Phase 1B/1C pipeline — RSS ingestion from 7 sources, scoring pipeline, summary generation, API routes (articles feed + detail with ticker/category filters), CLI ingest command, 11 tests passing
 - [2026-02-25] Phase 1A scaffold — installed Node.js 24 + pnpm, scaffolded Next.js 16 with Tailwind/TypeScript, created Drizzle schema (7 tables), LLM abstraction layer with Claude provider, Docker Compose, env validation, pushed to GitHub
 - [2026-02-25] AIMarketWire project setup — populated CLAUDE.md, created 30-day plan, logged 6 ADRs, built architecture overview, set up todo-list and HANDOFF.md

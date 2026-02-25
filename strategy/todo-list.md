@@ -9,18 +9,11 @@ _None currently._
 
 ## Up Next
 
-### Week 1 — Foundation (remaining)
-- [ ] Research and select 3–5 news sources (RSS feeds, news APIs)
-- [ ] Build ingestion service (fetch → deduplicate → store)
-- [ ] Set up background job scheduler (Inngest or BullMQ)
-- [ ] Build AI relevance scoring pipeline (0–100 with structured output)
-- [ ] Write tests for scoring service
-
-### Week 2 — Content Generation & API
-- [ ] Build LLM summary pipeline (summary + "Why It Matters")
-- [ ] Build ticker extraction and category tagging
-- [ ] Build API routes (articles feed, detail, ticker/category filters)
-- [ ] Wire full pipeline end-to-end
+### Immediate — Validate Pipeline
+- [ ] Generate Drizzle migration, test against local Postgres
+- [ ] Run `pnpm db:seed` to populate categories
+- [ ] Run `pnpm ingest --fetch-only` to test RSS fetching
+- [ ] Run full `pnpm ingest` end-to-end with Anthropic API key
 - [ ] Run live for 48 hours, tune relevance threshold
 
 ### Week 3 — Frontend
@@ -52,3 +45,10 @@ _None currently._
 - [x] Docker Compose for local Postgres — 2026-02-25
 - [x] Environment config with zod validation — 2026-02-25
 - [x] Initial commit and push to GitHub — 2026-02-25
+- [x] Research and configure 7 RSS news sources — 2026-02-25
+- [x] Build RSS ingestion service (fetch → dedup → store) — 2026-02-25
+- [x] Build AI relevance scoring pipeline (0–100) — 2026-02-25
+- [x] Build summary generation pipeline — 2026-02-25
+- [x] Build API routes (articles feed, detail, ticker/category filters) — 2026-02-25
+- [x] Build CLI ingest command (`pnpm ingest`) — 2026-02-25
+- [x] Write tests (11 passing) — 2026-02-25

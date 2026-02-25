@@ -7,19 +7,25 @@
 
 - **Date:** 2026-02-25
 - **Branch:** main
-- **Focus:** Phase 1A scaffold complete, ready for Phase 1B (ingestion pipeline)
+- **Focus:** Phase 1A–1C complete. Full backend pipeline built.
 
 ## Accomplished
 
-- Installed Node.js 24 LTS + pnpm 10.30 on Windows
-- Scaffolded Next.js 16 project with TypeScript, App Router, Tailwind CSS
-- Created Drizzle ORM schema: sources, raw_articles, articles, tickers, categories, article_tickers, article_categories
-- Built LLM abstraction layer with Claude provider (scoring + summarisation)
-- Docker Compose with Postgres 16 for local dev
-- Environment validation with zod
-- Vitest, Prettier, ESLint configured
-- Homepage with AIMarketWire branding and placeholder feed
-- Pushed initial commit to https://github.com/HallyAus/AI-News
+### This Session
+- Configured 7 verified RSS news sources (Bloomberg, TechCrunch, AI Business, The Decoder, MIT Tech Review, The Verge, VentureBeat)
+- Built RSS fetcher with parallel source fetching and error isolation
+- Built raw article storage with URL-based deduplication
+- Built AI relevance scoring pipeline (score → filter at 40 → summarise → publish)
+- Built summary generation with "Why It Matters" and compliance guardrails
+- Built API routes: GET /api/articles (paginated, filterable by ticker/category), GET /api/articles/[id]
+- Built CLI ingest command (`pnpm ingest`) — full pipeline orchestrator
+- Made DB connection lazy (Proxy pattern) so builds work without DATABASE_URL
+- 11 tests passing, build clean
+
+### Previous Session
+- Installed Node.js 24 LTS + pnpm 10.30, scaffolded Next.js 16
+- Drizzle schema (7 tables), LLM abstraction layer, Docker Compose, env validation
+- Pushed to https://github.com/HallyAus/AI-News
 
 ## In Progress
 
@@ -31,12 +37,13 @@ _None._
 
 ## Next Steps
 
-1. Research and select 3–5 news sources (RSS feeds, news APIs) for AI market news
-2. Build ingestion service (fetch → deduplicate → store raw articles)
-3. Set up background job scheduler (Inngest or BullMQ)
-4. Build AI relevance scoring pipeline (0–100 with structured output)
-5. Write tests for scoring service
-6. Generate first Drizzle migration and test against local Postgres
+1. Generate Drizzle migration and test against local Postgres (docker compose up)
+2. Run `pnpm db:seed` to populate categories
+3. Run `pnpm ingest --fetch-only` to test RSS fetching against live feeds
+4. Run full `pnpm ingest` with Anthropic API key to test scoring end-to-end
+5. Build frontend: homepage feed with real article cards, article detail page
+6. Set up background job scheduler (Inngest or cron) for automated ingestion
+7. Implement caching (Vercel KV / Redis)
 
 ## Active Beads Issues
 
@@ -46,41 +53,32 @@ _Beads not yet initialised._
 
 > Decisions, gotchas, or context that would take time to re-derive.
 
-- Next.js 16 (not 15) — was latest stable at scaffold time, same App Router architecture
-- Node 24 LTS installed (not 20) — winget pulled latest LTS
-- pnpm global bin is at `/c/Users/User/AppData/Roaming/npm` — needs to be on PATH in shell
-- Node.js installed at `/c/Program Files/nodejs` — also needs PATH
-- `.env.example` couldn't be created due to permission rules — used `env.example` instead
-- esbuild build scripts were skipped during install — works fine without them
-- Drizzle schema uses UUIDs as primary keys, all timestamps with timezone
-- LLM provider abstraction in `src/lib/llm/` — factory pattern, call `createLLMProvider()`
-- Claude provider uses `claude-sonnet-4-20250514` model for scoring and summarisation
-- LLM provider must stay behind abstraction layer — PRD requires model switching without refactor
-- No trading advice in generated content — compliance is a hard requirement
-- Publisher attribution is non-negotiable — always link original source
+- DB connection is lazy via Proxy — safe for build time, initialises on first query
+- RSS fetcher uses `rss-parser` with 15s timeout and custom User-Agent
+- `fetchAllSources()` uses Promise.allSettled — one feed failing won't break others
+- Scoring pipeline processes 10 articles per batch by default (configurable via `limit` param)
+- Articles below relevance threshold 40 are marked processed but not published
+- `pnpm ingest --fetch-only` skips scoring (useful for testing feed connectivity)
+- 7 RSS sources verified working 2026-02-25; VentureBeat may have lower publish frequency
+- Bloomberg feed is general tech — relies on scoring pipeline to filter non-AI articles
+- API routes use `s-maxage` and `stale-while-revalidate` cache headers
 
-## Files Modified
+## Files Modified (This Session)
 
 ```
 package.json
 pnpm-lock.yaml
-docker-compose.yml
-drizzle.config.ts
-env.example
-prettier.config.mjs
-vitest.config.ts
-src/app/layout.tsx
-src/app/page.tsx
-src/db/schema.ts
 src/db/index.ts
-src/db/seed.ts
-src/lib/env.ts
-src/lib/llm/index.ts
-src/lib/llm/claude.ts
-src/types/llm.ts
-.gitignore
-strategy/todo-list.md
-.claude/rules/memory-decisions.md
-.claude/rules/memory-sessions.md
-memory/HANDOFF.md
+src/lib/ingestion/sources.ts
+src/lib/ingestion/rss-fetcher.ts
+src/lib/ingestion/store.ts
+src/lib/ingestion/index.ts
+src/lib/pipeline/scorer.ts
+src/lib/pipeline/index.ts
+src/app/api/articles/route.ts
+src/app/api/articles/[id]/route.ts
+src/scripts/ingest.ts
+src/__tests__/rss-fetcher.test.ts
+src/__tests__/llm-provider.test.ts
+src/__tests__/sources.test.ts
 ```
