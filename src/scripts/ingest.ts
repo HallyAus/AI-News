@@ -51,6 +51,13 @@ async function main() {
   const passed = results.filter((r) => r.passed).length;
   const failed = results.filter((r) => r.error).length;
 
+  // Log errors for debugging
+  for (const r of results) {
+    if (r.error) {
+      console.error(`[ingest] Scoring error for ${r.rawArticleId}: ${r.error}`);
+    }
+  }
+
   console.log(
     `[ingest] Scored ${results.length} articles: ${passed} published, ${results.length - passed - failed} rejected, ${failed} errors`
   );

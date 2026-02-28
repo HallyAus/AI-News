@@ -5,27 +5,30 @@
 
 ## Last Updated
 
-- **Date:** 2026-02-25
+- **Date:** 2026-02-27
 - **Branch:** main
-- **Focus:** Phase 1A–1C complete. Full backend pipeline built.
+- **Focus:** Go live — site deployed to aimarketwire.ai with real data.
 
 ## Accomplished
 
 ### This Session
-- Configured 7 verified RSS news sources (Bloomberg, TechCrunch, AI Business, The Decoder, MIT Tech Review, The Verge, VentureBeat)
-- Built RSS fetcher with parallel source fetching and error isolation
-- Built raw article storage with URL-based deduplication
-- Built AI relevance scoring pipeline (score → filter at 40 → summarise → publish)
-- Built summary generation with "Why It Matters" and compliance guardrails
-- Built API routes: GET /api/articles (paginated, filterable by ticker/category), GET /api/articles/[id]
-- Built CLI ingest command (`pnpm ingest`) — full pipeline orchestrator
-- Made DB connection lazy (Proxy pattern) so builds work without DATABASE_URL
-- 11 tests passing, build clean
+- Built polished frontend: dark terminal editorial design with score rings, category badges, ticker badges, staggered animations
+- Used Newsreader (serif) + IBM Plex Mono (data) + Geist (body) fonts
+- Wired homepage to fetch from /api/articles with mock data fallback
+- Created Vercel cron route (GET /api/cron/ingest) for automated daily ingestion
+- Created vercel.json with daily cron schedule (Hobby plan limitation)
+- Set up Neon database (ap-southeast-2 Sydney), ran migration, seeded 5 categories
+- Fixed scorer bug: wrong column reference (rawArticles.sourceId → sources.id) + missing import
+- Fixed JSON parsing: added extractJSON() to handle markdown-wrapped LLM responses
+- Updated model from claude-sonnet-4-20250514 to claude-sonnet-4-6
+- Added force-dynamic to homepage (API not available at build time)
+- Deployed to Vercel, connected aimarketwire.ai domain
+- Ran first ingestion: 137 articles fetched, 11 published, 9 rejected, 0 errors
+- Site is LIVE at https://aimarketwire.ai
 
 ### Previous Session
-- Installed Node.js 24 LTS + pnpm 10.30, scaffolded Next.js 16
-- Drizzle schema (7 tables), LLM abstraction layer, Docker Compose, env validation
-- Pushed to https://github.com/HallyAus/AI-News
+- Full backend pipeline: RSS ingestion, AI scoring, summary generation, API routes
+- CLI ingest command, 11 tests passing
 
 ## In Progress
 
@@ -37,13 +40,14 @@ _None._
 
 ## Next Steps
 
-1. Generate Drizzle migration and test against local Postgres (docker compose up)
-2. Run `pnpm db:seed` to populate categories
-3. Run `pnpm ingest --fetch-only` to test RSS fetching against live feeds
-4. Run full `pnpm ingest` with Anthropic API key to test scoring end-to-end
-5. Build frontend: homepage feed with real article cards, article detail page
-6. Set up background job scheduler (Inngest or cron) for automated ingestion
-7. Implement caching (Vercel KV / Redis)
+1. Run more ingestion batches to process remaining 117 unprocessed articles
+2. Upgrade to Vercel Pro for hourly cron (currently daily)
+3. Connect GitHub repo to Vercel for auto-deploy on push
+4. Build article detail page (/articles/[id])
+5. Add category filtering (currently nav links are placeholders)
+6. Set up monitoring/alerting for ingestion failures
+7. Tune relevance threshold after more data (currently 40)
+8. Consider Proxmox worker for more frequent ingestion
 
 ## Active Beads Issues
 
@@ -51,34 +55,28 @@ _Beads not yet initialised._
 
 ## Context
 
-> Decisions, gotchas, or context that would take time to re-derive.
-
-- DB connection is lazy via Proxy — safe for build time, initialises on first query
-- RSS fetcher uses `rss-parser` with 15s timeout and custom User-Agent
-- `fetchAllSources()` uses Promise.allSettled — one feed failing won't break others
-- Scoring pipeline processes 10 articles per batch by default (configurable via `limit` param)
-- Articles below relevance threshold 40 are marked processed but not published
-- `pnpm ingest --fetch-only` skips scoring (useful for testing feed connectivity)
-- 7 RSS sources verified working 2026-02-25; VentureBeat may have lower publish frequency
-- Bloomberg feed is general tech — relies on scoring pipeline to filter non-AI articles
-- API routes use `s-maxage` and `stale-while-revalidate` cache headers
+- Neon project: aimarketwire in ap-southeast-2, org-calm-flower-05958305
+- Vercel project: danieljhall-mecoms-projects/aimarketwire
+- Domain: aimarketwire.ai (SSL provisioned)
+- Cron: daily at midnight UTC (Hobby plan limit)
+- Scorer processes 20 articles per batch — need multiple runs to clear 137 backlog
+- Store function counts inserts wrong (counts conflicts as stored) — cosmetic only
+- The `sources` table column was being incorrectly referenced in scorer — now fixed
+- LLM sometimes wraps JSON in markdown code blocks — extractJSON() handles this
 
 ## Files Modified (This Session)
 
 ```
-package.json
-pnpm-lock.yaml
-src/db/index.ts
-src/lib/ingestion/sources.ts
-src/lib/ingestion/rss-fetcher.ts
-src/lib/ingestion/store.ts
-src/lib/ingestion/index.ts
+src/app/globals.css
+src/app/layout.tsx
+src/app/page.tsx
+src/app/api/cron/ingest/route.ts (new)
+src/lib/env.ts
+src/lib/llm/claude.ts
 src/lib/pipeline/scorer.ts
-src/lib/pipeline/index.ts
-src/app/api/articles/route.ts
-src/app/api/articles/[id]/route.ts
 src/scripts/ingest.ts
-src/__tests__/rss-fetcher.test.ts
-src/__tests__/llm-provider.test.ts
-src/__tests__/sources.test.ts
+src/scripts/reset-stuck.ts (new)
+vercel.json (new)
+drizzle/0000_magical_shinko_yamashiro.sql (generated)
+drizzle/meta/ (generated)
 ```

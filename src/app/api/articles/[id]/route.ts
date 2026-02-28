@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { articles } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
+
+// UUID v4 regex for detecting if the param is a UUID or slug
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export async function GET(
   _request: NextRequest,
@@ -10,8 +13,14 @@ export async function GET(
   const { id } = await params;
 
   try {
+    // Support lookup by either UUID or slug
+    const isUuid = UUID_RE.test(id);
+    const whereClause = isUuid
+      ? or(eq(articles.id, id), eq(articles.slug, id))
+      : eq(articles.slug, id);
+
     const article = await db.query.articles.findFirst({
-      where: eq(articles.id, id),
+      where: whereClause,
       with: {
         articleTickers: {
           with: { ticker: true },
@@ -32,6 +41,7 @@ export async function GET(
     return NextResponse.json(
       {
         id: article.id,
+        slug: article.slug,
         title: article.title,
         summary: article.aiSummary,
         whyItMatters: article.whyItMatters,

@@ -11,6 +11,11 @@ Each entry: `[YYYY-MM-DD] Decision — Rationale`
 
 <!-- Claude: add new entries at the top -->
 
+- [2026-02-27] Domain aimarketwire.ai — registered and connected to Vercel
+- [2026-02-27] Vercel Hobby plan — daily cron (0 0 * * *) for ingestion, hourly requires Pro
+- [2026-02-27] Neon free tier in ap-southeast-2 (Sydney) — low latency for Australian users
+- [2026-02-27] claude-sonnet-4-6 for scoring/summarisation — updated from claude-sonnet-4-20250514
+- [2026-02-27] Force-dynamic homepage — page fetches from API at runtime, not statically generated
 - [2026-02-25] 7 RSS sources for launch — Bloomberg Tech, TechCrunch AI, AI Business, The Decoder, MIT Tech Review, The Verge AI, VentureBeat AI. Reuters dropped (no free RSS since 2020)
 - [2026-02-25] Lazy DB connection via Proxy — avoids build-time errors when DATABASE_URL not set
 - [2026-02-25] Next.js 16 instead of 15 — latest stable at scaffold time, same App Router architecture, React 19 support

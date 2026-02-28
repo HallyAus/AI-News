@@ -69,6 +69,7 @@ export const articles = pgTable(
     rawArticleId: uuid("raw_article_id")
       .notNull()
       .references(() => rawArticles.id),
+    slug: varchar("slug", { length: 255 }).notNull(),
     title: text("title").notNull(),
     originalUrl: text("original_url").notNull(),
     sourceName: varchar("source_name", { length: 255 }).notNull(),
@@ -86,6 +87,7 @@ export const articles = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("articles_slug_idx").on(table.slug),
     index("articles_status_idx").on(table.status),
     index("articles_relevance_idx").on(table.relevanceScore),
     index("articles_published_idx").on(table.publishedAt),

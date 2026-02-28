@@ -1,26 +1,174 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: #09090b;
+  --color-foreground: #fafafa;
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-serif: var(--font-newsreader);
+  --font-mono: var(--font-ibm-plex-mono);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+
+/* ── Subtle scanline texture (terminal feel) ── */
+.scanlines::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.012;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    white 2px,
+    white 3px
+  );
+}
+
+/* ── Keyframes ── */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes score-ring-fill {
+  from {
+    stroke-dashoffset: var(--ring-circumference);
+  }
+}
+
+@keyframes ticker-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* ── Animation utilities ── */
+.animate-fade-in-up {
+  opacity: 0;
+  animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+.animate-score-ring {
+  animation: score-ring-fill 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Score colours ── */
+.score-high {
+  color: #34d399;
+}
+.score-mid {
+  color: #fbbf24;
+}
+.score-low {
+  color: #a1a1aa;
+}
+
+.stroke-score-high {
+  stroke: #34d399;
+}
+.stroke-score-mid {
+  stroke: #fbbf24;
+}
+.stroke-score-low {
+  stroke: #a1a1aa;
+}
+
+.border-score-high {
+  border-color: #34d399;
+}
+.border-score-mid {
+  border-color: #fbbf24;
+}
+.border-score-low {
+  border-color: #a1a1aa;
+}
+
+.bg-score-high {
+  background-color: rgba(52, 211, 153, 0.08);
+}
+.bg-score-mid {
+  background-color: rgba(251, 191, 36, 0.08);
+}
+.bg-score-low {
+  background-color: rgba(161, 161, 170, 0.08);
+}
+
+/* ── Category accent colours ── */
+.cat-chips {
+  --cat-color: #fbbf24;
+}
+.cat-regulation {
+  --cat-color: #f87171;
+}
+.cat-models {
+  --cat-color: #22d3ee;
+}
+.cat-infrastructure {
+  --cat-color: #60a5fa;
+}
+.cat-applications {
+  --cat-color: #a78bfa;
+}
+
+.cat-badge {
+  color: var(--cat-color);
+  border-color: color-mix(in srgb, var(--cat-color) 30%, transparent);
+  background-color: color-mix(in srgb, var(--cat-color) 6%, transparent);
+}
+
+/* ── Card hover ── */
+.article-card {
+  transition: border-color 0.2s ease, background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.article-card:hover {
+  border-color: #3f3f46;
+  background-color: rgba(24, 24, 27, 0.8);
+  box-shadow: 0 0 0 1px rgba(63, 63, 70, 0.2);
+}
+
+/* ── Featured card left accent ── */
+.featured-accent {
+  position: relative;
+}
+.featured-accent::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #34d399, #059669);
 }

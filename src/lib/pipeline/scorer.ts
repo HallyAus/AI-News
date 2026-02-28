@@ -1,7 +1,8 @@
 import { db } from "@/db";
-import { rawArticles, articles, tickers, categories, articleTickers, articleCategories } from "@/db/schema";
+import { sources, rawArticles, articles, tickers, categories, articleTickers, articleCategories } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { createLLMProvider } from "@/lib/llm";
+import { generateUniqueSlug } from "@/lib/utils/slug";
 import type { ScoringResult } from "@/types/llm";
 
 const RELEVANCE_THRESHOLD = 40;
@@ -81,14 +82,16 @@ async function createPublishedArticle(
 
   // Look up source name
   const source = await db.query.sources.findFirst({
-    where: eq(rawArticles.sourceId, raw.sourceId),
+    where: eq(sources.id, raw.sourceId),
   });
 
   // Insert published article
+  const slug = generateUniqueSlug(raw.title, raw.id);
   const [article] = await db
     .insert(articles)
     .values({
       rawArticleId: raw.id,
+      slug,
       title: raw.title,
       originalUrl: raw.url,
       sourceName: source?.name ?? "Unknown",
