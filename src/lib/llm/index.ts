@@ -6,7 +6,7 @@ const providers: Record<string, () => LLMProvider> = {
 };
 
 export function createLLMProvider(provider?: string): LLMProvider {
-  const name = provider ?? process.env.LLM_PROVIDER ?? "claude";
+  const name = (provider ?? process.env.LLM_PROVIDER ?? "claude").trim();
   const factory = providers[name];
 
   if (!factory) {
